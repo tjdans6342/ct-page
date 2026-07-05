@@ -1,0 +1,1093 @@
+/* 디자인 토큰 — 역할 기반 변수. 모든 색상은 반드시 var(--...)로만 참조한다. */
+
+:root {
+  --bg: #050505;
+  --surface: #111111;
+  --surface-2: #1A1A1A;
+  --text: #F5F5F0;
+  --text-muted: #8A8A8A;
+  --border: #2A2A2A;
+  --accent: #5EC8F2;
+  --accent-from: #5EC8F2;
+  --accent-to: #3B8FE8;
+  --accent-soft: #1A1A1A;
+  --accent-ink: #04101f;
+  --verdict: #E0B843;
+  /* 타임라인 전용 — 교육/콘텐츠 이력 (밝은 스카이블루) */
+  --accent2-from: #8FE0FF;
+  --accent2-to: #5EC8F2;
+  /* 타임라인 전용 — 알고리즘 대회 이력 (진한 인디고블루) */
+  --accent3-from: #5A7FF2;
+  --accent3-to: #3355C9;
+
+  --gradient-accent: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+  --gradient-accent2: linear-gradient(135deg, var(--accent2-from), var(--accent2-to));
+  --gradient-accent3: linear-gradient(135deg, var(--accent3-from), var(--accent3-to));
+
+  --font-display: "Pretendard Variable", Pretendard, -apple-system, "Malgun Gothic", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
+
+  --width-narrow: 640px;
+  --width-wide: 900px;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.7;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* 배경 효과 — 격자 + 애니메이션 블롭 + 노이즈 + 마우스 추적 글로우 */
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: -1px;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--text) 3%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--text) 3%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 90%);
+}
+
+.bg-blob {
+  position: absolute;
+  width: 44vw;
+  height: 44vw;
+  max-width: 620px;
+  max-height: 620px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.1;
+  will-change: transform;
+}
+
+.bg-blob-1 {
+  top: -12%;
+  left: -8%;
+  background: var(--accent-from);
+  animation: blob-drift-1 34s ease-in-out infinite;
+}
+
+.bg-blob-2 {
+  top: 20%;
+  right: -14%;
+  background: var(--accent-to);
+  animation: blob-drift-2 40s ease-in-out infinite;
+}
+
+.bg-blob-3 {
+  bottom: -18%;
+  left: 22%;
+  width: 36vw;
+  height: 36vw;
+  max-width: 480px;
+  max-height: 480px;
+  background: color-mix(in srgb, var(--accent-from) 60%, var(--accent-to));
+  animation: blob-drift-3 46s ease-in-out infinite;
+}
+
+@keyframes blob-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6vw, 8vh) scale(1.12); }
+}
+
+@keyframes blob-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-7vw, 6vh) scale(0.92); }
+}
+
+@keyframes blob-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(5vw, -6vh) scale(1.08); }
+}
+
+.bg-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+
+.bg-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    360px circle at var(--mx, 50%) var(--my, 30%),
+    color-mix(in srgb, var(--accent-from) 5%, transparent),
+    transparent 70%
+  );
+  transition: background 0.15s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-blob {
+    animation: none;
+  }
+
+  .stat-card {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .bg-blob {
+    opacity: 0.07;
+  }
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: 1.25;
+  margin: 0 0 0.5em;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--accent);
+}
+
+main,
+.hero,
+.site-footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* 스크롤 reveal — 뷰포트 진입 시 fade + slide-up */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Hero */
+.hero {
+  overflow: hidden;
+  padding: 6rem 1.5rem 5rem;
+  text-align: center;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 60%;
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent-from) 9%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.hero-inner {
+  position: relative;
+  max-width: var(--width-narrow);
+  margin: 0 auto;
+}
+
+.hero-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 999px;
+  padding: 0.4em 0.95em;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.5rem;
+}
+
+.hero-role::before {
+  content: "<>";
+  font-weight: 700;
+}
+
+.hero-name {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.hero-name-accent {
+  color: var(--accent);
+}
+
+.hero-tagline {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 색상 하이라이팅 — 텍스트 색 자체를 브랜드 컬러로 강조 */
+.hl-color {
+  color: var(--accent);
+}
+
+/* 밑줄 하이라이팅 — 텍스트는 유지하고 굵기 + 밑줄로 포인트 강조 */
+.hl {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.15em;
+}
+
+section {
+  position: relative;
+  max-width: var(--width-wide);
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+/* 섹션 구분선 — 화면 전체 폭으로 이어지는 그라데이션 라인 (accent를 옅게 섞어 은은하게 발광) */
+main > section + section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 100vw;
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent-from) 45%, var(--border)) 20%,
+    color-mix(in srgb, var(--accent-from) 45%, var(--border)) 80%,
+    transparent
+  );
+}
+
+/* 핵심 실적 통계 */
+.stats {
+  padding-top: 0;
+  padding-bottom: 2.5rem;
+}
+
+.stat-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.stat-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.75rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  animation: stat-float 6s ease-in-out infinite;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--gradient-accent);
+  opacity: 0.85;
+}
+
+.stat-card:nth-child(2) {
+  animation-delay: -2s;
+}
+
+.stat-card:nth-child(3) {
+  animation-delay: -4s;
+}
+
+.stat-card:hover {
+  border-color: color-mix(in srgb, var(--accent-from) 40%, var(--border));
+  background: var(--surface-2);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -20px color-mix(in srgb, var(--accent-from) 45%, transparent);
+  animation-play-state: paused;
+}
+
+@keyframes stat-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.stat-icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+  color: var(--accent-from);
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 800;
+  color: var(--text);
+}
+
+.stat-value-sub {
+  font-size: 0.45em;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 0.15em;
+}
+
+@media (max-width: 640px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1.25rem 1rem;
+  }
+}
+
+/* 헤드라인형 섹션 제목 — 교육 방식 / 연혁 / 강의 */
+.teaching-method h2,
+.timeline h2,
+.courses h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+  margin-bottom: 2rem;
+}
+
+.timeline h2 {
+  margin-bottom: 1.5rem;
+}
+
+.timeline-intro {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--text-muted);
+  max-width: 100%;
+  margin-bottom: 2.5rem;
+}
+
+/* 교육 방식 — 그리드 타일 */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem 1rem;
+}
+
+.compare-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.compare-mark {
+  flex-shrink: 0;
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.compare-cell-x {
+  color: var(--text-muted);
+  border-color: color-mix(in srgb, #E5484D 22%, var(--border));
+}
+
+.compare-cell-x .compare-mark {
+  color: #E5484D;
+}
+
+.compare-cell-x:hover {
+  border-color: color-mix(in srgb, #E5484D 40%, var(--border));
+}
+
+.compare-cell-o {
+  color: var(--text);
+  font-weight: 600;
+  border-color: color-mix(in srgb, var(--accent2-from) 30%, var(--border));
+}
+
+.compare-cell-o .compare-mark {
+  color: var(--accent2-from);
+}
+
+.compare-cell-o:hover {
+  border-color: color-mix(in srgb, var(--accent2-from) 50%, var(--border));
+  background: var(--surface-2);
+}
+
+@media (max-width: 640px) {
+  .compare-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+}
+
+/* 연혁 — 중앙 타임라인 (좌: ICPC 대회 성과 / 우: 교육·콘텐츠 이력) */
+.timeline-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.75rem;
+  margin: -0.5rem 0 2rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gradient-accent2);
+}
+
+.legend-dot.is-contest {
+  background: var(--gradient-accent3);
+}
+
+.dual-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.dual-timeline::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--text-muted) 70%, transparent), var(--border));
+  opacity: 0.55;
+}
+
+.tl-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 4.5rem 1fr;
+  align-items: stretch;
+  gap: 0 1.25rem;
+  min-height: 6rem;
+}
+
+.tl-side {
+  position: relative;
+  min-width: 0;
+}
+
+.tl-left {
+  padding-right: 1.25rem;
+}
+
+.tl-right {
+  padding-left: 1.25rem;
+}
+
+.tl-year {
+  position: relative;
+  margin-top: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  z-index: 1;
+}
+
+.tl-year::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  z-index: -1;
+}
+
+/* 각 이벤트는 해당 연도 구간 내 월 위치(--month: 1~12)에 비례해 세로로 배치되고,
+   중앙 축의 그 지점까지 점 + 연결선으로 이어진다. */
+.tl-card {
+  position: absolute;
+  top: calc((var(--month, 6) - 1) / 12 * 100%);
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  width: max-content;
+  max-width: 100%;
+  padding: 0.5rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent2-from) 30%, var(--border));
+  border-radius: 8px;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.tl-left .tl-card {
+  right: 0;
+}
+
+.tl-right .tl-card {
+  left: 0;
+}
+
+/* 카드에서 중앙 축까지 이어지는 연결선 */
+.tl-card::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 1.25rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--accent2-from) 55%, var(--border));
+  transform: translateY(-50%);
+}
+
+.tl-left .tl-card::after {
+  right: -1.25rem;
+}
+
+.tl-right .tl-card::after {
+  left: -1.25rem;
+}
+
+.tl-card.is-contest::after {
+  background: color-mix(in srgb, var(--accent3-from) 55%, var(--border));
+}
+
+/* 연결선이 축에 닿는 지점의 점 */
+.tl-card::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gradient-accent2);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.tl-left .tl-card::before {
+  right: -1.34rem;
+}
+
+.tl-right .tl-card::before {
+  left: -1.34rem;
+}
+
+.tl-card.is-contest::before {
+  background: var(--gradient-accent3);
+}
+
+.tl-card:hover,
+.tl-card:focus-visible,
+.tl-card:focus-within {
+  background: var(--surface-2);
+  z-index: 2;
+}
+
+.tl-card:not(.is-contest):hover,
+.tl-card:not(.is-contest):focus-visible,
+.tl-card:not(.is-contest):focus-within {
+  border-color: color-mix(in srgb, var(--accent2-from) 45%, var(--border));
+}
+
+.tl-card.is-contest {
+  border-color: color-mix(in srgb, var(--accent3-from) 35%, var(--border));
+}
+
+.tl-card.is-contest:hover,
+.tl-card.is-contest:focus-visible {
+  border-color: color-mix(in srgb, var(--accent3-from) 40%, var(--border));
+}
+
+.tl-body {
+  color: var(--text);
+  font-size: 0.85rem;
+  line-height: 1.3;
+  white-space: normal;
+}
+
+.tl-link {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent2-from) 55%, transparent);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.15s ease;
+}
+
+.tl-link:hover,
+.tl-link:focus-visible {
+  text-decoration-color: var(--accent2-from);
+}
+
+.tl-result {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent3-from);
+}
+
+/* 호버/포커스 시 상세 정보 플로팅 (.tl-detail 자식 요소로 구현) */
+.tl-detail {
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: max-content;
+  max-width: 26rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.5);
+  z-index: 3;
+}
+
+.tl-detail-line {
+  display: block;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.tl-detail-line::before {
+  content: "> ";
+  color: var(--accent2-from);
+}
+
+.tl-card.is-contest .tl-detail-line::before {
+  color: var(--accent3-from);
+}
+
+.tl-detail-line + .tl-detail-line {
+  margin-top: 0.2rem;
+}
+
+.tl-detail-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.tl-detail-link:hover,
+.tl-detail-link:focus-visible {
+  color: var(--text);
+}
+
+/* 카드-툴팁 사이 간격을 투명 hit-area로 메워 호버 경로가 끊기지 않게 한다 */
+.tl-detail::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 0.6rem;
+}
+
+.tl-card:hover .tl-detail,
+.tl-card:focus-visible .tl-detail,
+.tl-card:focus-within .tl-detail,
+.tl-detail:hover,
+.tl-detail:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 640px) {
+  .dual-timeline::before {
+    left: 1.05rem;
+  }
+
+  .tl-row {
+    grid-template-columns: 2.1rem 1fr;
+    grid-template-areas:
+      "year left"
+      "year right";
+    min-height: 0;
+    row-gap: 0.5rem;
+  }
+
+  .tl-year {
+    grid-area: year;
+  }
+
+  .tl-left {
+    grid-area: left;
+    padding-right: 0;
+    padding-left: 1.25rem;
+  }
+
+  .tl-right {
+    grid-area: right;
+    padding-left: 1.25rem;
+  }
+
+  .tl-left:empty,
+  .tl-right:empty {
+    display: none;
+  }
+
+  .tl-left .tl-card,
+  .tl-right .tl-card {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    margin-bottom: 0.6rem;
+  }
+
+  .tl-left .tl-card:last-child,
+  .tl-right .tl-card:last-child {
+    margin-bottom: 0;
+  }
+
+  .tl-left .tl-card::after,
+  .tl-right .tl-card::after,
+  .tl-left .tl-card::before,
+  .tl-right .tl-card::before {
+    left: -1.25rem;
+    right: auto;
+  }
+
+  .tl-detail {
+    left: 0;
+    transform: translateY(4px);
+  }
+
+  .tl-card:hover .tl-detail,
+  .tl-card:focus-visible .tl-detail {
+    transform: translateY(0);
+  }
+}
+
+/* Courses / Roadmap */
+.roadmap {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.roadmap-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2.5rem;
+  padding: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  page-break-inside: avoid;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.roadmap-item:not(.roadmap-item-soon):hover {
+  border-color: color-mix(in srgb, var(--accent-from) 40%, var(--border));
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -24px color-mix(in srgb, var(--accent-from) 45%, transparent);
+}
+
+.roadmap-item-reverse .roadmap-media {
+  order: 2;
+}
+
+.roadmap-item-reverse .roadmap-body {
+  order: 1;
+}
+
+.roadmap-media {
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.roadmap-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.roadmap-item-soon .roadmap-media {
+  background: var(--surface);
+}
+
+.roadmap-item-soon {
+  opacity: 0.6;
+}
+
+.roadmap-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.roadmap-desc {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0.5em 0 1em;
+}
+
+@media (max-width: 760px) {
+  .roadmap-item {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-item-reverse .roadmap-media,
+  .roadmap-item-reverse .roadmap-body {
+    order: initial;
+  }
+}
+
+.course-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.25em 0.6em;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  margin-bottom: 0.8em;
+}
+
+
+.course-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.course-langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  margin-top: 0.6em;
+}
+
+.lang-chip {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.25em 0.55em;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.course-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  margin: 0.6em 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.course-rating .icon-star {
+  width: 1em;
+  height: 1em;
+  color: #f5b400;
+  flex-shrink: 0;
+}
+
+.course-rating .icon-users {
+  width: 1em;
+  height: 1em;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.course-rating .rating-dot {
+  color: var(--text-muted);
+}
+
+/* Footer */
+.site-footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.site-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  background-image: var(--gradient-accent);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1.5px;
+  transition: background-size 0.25s ease, color 0.25s ease;
+  padding-bottom: 2px;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  color: var(--text);
+  background-size: 100% 1.5px;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+  .hero {
+    padding: 5rem 1.25rem 4rem;
+  }
+
+  section {
+    padding: 3rem 1.25rem;
+  }
+}
+
+/* 인쇄 대응 — 강사소개서 PDF 겸용 (항상 라이트 색상으로 인쇄) */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f2f5f9;
+    --text: #000000;
+    --text-muted: #444444;
+    --border: #cccccc;
+    --accent: #1B3A6B;
+    --accent-from: #1B3A6B;
+    --accent-to: #1B3A6B;
+    --accent-soft: #f2f5f9;
+    --verdict: #8a6d10;
+    --accent2-from: #2f6fa8;
+    --accent2-to: #2f6fa8;
+    --accent3-from: #1B3A6B;
+    --accent3-to: #1B3A6B;
+    color-scheme: light;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+
+  .hero::before,
+  .bg-fx {
+    display: none;
+  }
+
+  .hero-name {
+    -webkit-text-fill-color: initial;
+    background: none;
+    color: #000000;
+  }
+
+  .course-badge {
+    color: #ffffff;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .tl-row {
+    page-break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #555;
+  }
+}
